@@ -1,0 +1,7 @@
+Most everything is helpfully invisible because it's a dotfile!
+
+To get all this working, go to ~/ clone this there, then:
+
+    cp -s dotfiles.git/symlinks/* .
+
+That will give you links of the links in homedir.
