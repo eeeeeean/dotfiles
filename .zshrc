@@ -5,7 +5,7 @@ ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="robbyrussell"
+ZSH_THEME="dpoggi"
 
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
@@ -35,3 +35,9 @@ source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
 export PATH=/home/koopa/.rvm/gems/ruby-1.9.3-p286/bin:/home/koopa/.rvm/gems/ruby-1.9.3-p286@global/bin:/home/koopa/.rvm/rubies/ruby-1.9.3-p286/bin:/home/koopa/.rvm/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/koopa/.rvm/bin:/usr/bin:/usr/local:/home/koopa/.rvm/bin
+
+#aliases
+
+alias star='ssh youngi@stargate.cat.pdx.edu'
+alias ruby='ssh youngi@ruby.cat.pdx.edu'
+alias rita='ssh youngi@rita.cat.pdx.edu'
