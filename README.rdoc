@@ -2,6 +2,6 @@ Most everything is helpfully invisible because it's a dotfile!
 
 To get all this working, go to ~/ clone this there, then:
 
-    cp -s dotfiles.git/symlinks/* .
+    cp -sf dotfiles.git/symlinks/.* .
 
-That will give you links of the links in homedir.
+That will give you links of the links in homedir and replace the old links.
