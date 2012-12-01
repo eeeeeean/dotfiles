@@ -1,4 +1,6 @@
-
+source ~/.git-completion.bash
+source ~/.git-prompt.sh
+export PS1='\w$(__git_ps1 "(%s)") > '
 
 # Show indication that a certain SSH key is loaded
 function __prompt_ssh_agent {
