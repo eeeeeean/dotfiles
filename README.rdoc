@@ -1,7 +1,6 @@
 Most everything is helpfully invisible because it's a dotfile!
 
-To get all this working, go to ~/ clone this there, then:
+And there are two branches.
 
-    ln -sf dotfiles/.* .
-
-That will give you links in homedir and replace whatever was there by that name so be careful.
+  master is the linux config
+  mac is the mac config
