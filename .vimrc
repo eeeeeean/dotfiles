@@ -4,19 +4,12 @@
 "
 " Have fun!
 "
-"I did siome tutorials. And I commented out some things in the 300 range because
-"they were complaing. I know, this is bad. But I got ruby mode going. Also, this
-"page is git controlled. I don't know what I'm supposed to do with that
-"information.
-" If you search for /tmp/udo you'll find it.
-
-:set number
 
 set nocompatible
 filetype off
 
 " Load external configuration before anything else {{{
-if filereadable(expand("~/dotfiles.git/.vim/before.vimrc"))
+if filereadable(expand("~/.vim/before.vimrc"))
   source ~/.vim/before.vimrc
 endif
 " }}}
@@ -62,6 +55,9 @@ if count(g:vimified_packages, 'general')
     Bundle 'tpope/vim-speeddating'
     Bundle 'tpope/vim-surround'
     Bundle 'tpope/vim-unimpaired'
+    Bundle 'maxbrunsfeld/vim-yankstack'
+    Bundle 'tpope/vim-eunuch'
+
     Bundle 'scrooloose/nerdtree'
     nmap <C-u> :NERDTreeToggle<CR>
     " Disable the scrollbars (NERDTree)
@@ -72,7 +68,7 @@ if count(g:vimified_packages, 'general')
     Bundle 'vim-scripts/YankRing.vim'
     let g:yankring_replace_n_pkey = '<leader>['
     let g:yankring_replace_n_nkey = '<leader>]'
-    let g:yankring_history_dir = '~/.vim/tmp'
+    let g:yankring_history_dir = '~/.vim/tmp/'
     nmap <leader>y :YRShow<cr>
 
     Bundle 'michaeljsmith/vim-indent-object'
@@ -89,10 +85,9 @@ endif
 
 " _. Fancy {{{
 if count(g:vimified_packages, 'fancy')
-    Bundle 'Lokaltog/vim-powerline'
-    let g:Powerline_symbols = 'fancy'
-    let g:Powerline_cache_enabled = 1
-    set encoding=utf-8
+    " Bundle 'Lokaltog/vim-powerline'
+   " let g:Powerline_symbols = 'fancy'
+   " let g:Powerline_cache_enabled = 1
 endif
 " }}}
 
@@ -100,11 +95,10 @@ endif
 if count(g:vimified_packages, 'os')
     Bundle 'zaiste/tmux.vim'
     Bundle 'benmills/vimux'
-    map <Leader>rp :PromptVimTmuxCommand<CR>
-    map <Leader>rl :RunLastVimTmuxCommand<CR>
+    map <Leader>rp :VimuxPromptCommand<CR>
+    map <Leader>rl :VimuxRunLastCommand<CR>
 
-    vmap <LocalLeader>rs "vy :call RunVimTmuxCommand(@v . "\n", 0)<CR>
-    nmap <LocalLeader>rs vip<LocalLeader>rs<CR>
+    map <LocalLeader>d :call VimuxRunCommand(@v, 0)<CR>
 endif
 " }}}
 
@@ -133,10 +127,12 @@ if count(g:vimified_packages, 'coding')
     Bundle 'scrooloose/syntastic'
     let g:syntastic_enable_signs=1
     let g:syntastic_auto_loc_list=1
+    let g:syntastic_mode_map = { 'mode': 'active', 'active_filetypes': ['ruby', 'js'], 'passive_filetypes': ['html', 'css', 'slim'] }
 
     " --
 
     autocmd FileType gitcommit set tw=68 spell
+    autocmd FileType gitcommit setlocal foldmethod=manual
 endif
 " }}}
 
@@ -148,6 +144,7 @@ if count(g:vimified_packages, 'ruby')
     Bundle 'ecomba/vim-ruby-refactoring'
 
     autocmd FileType ruby,eruby,yaml set tw=80 ai sw=2 sts=2 et
+    autocmd FileType ruby,eruby,yaml setlocal foldmethod=manual
     autocmd User Rails set tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 endif
 " }}}
@@ -158,7 +155,8 @@ if count(g:vimified_packages, 'html')
     Bundle 'juvenn/mustache.vim'
     Bundle 'tpope/vim-markdown'
     Bundle 'digitaltoad/vim-jade'
-    Bundle 'bbommarito/vim-slim'
+    Bundle 'slim-template/vim-slim'
+    Bundle 'tristen/vim-sparkup'
 
     au BufNewFile,BufReadPost *.jade setl shiftwidth=2 tabstop=2 softtabstop=2 expandtab
     au BufNewFile,BufReadPost *.html setl shiftwidth=2 tabstop=2 softtabstop=2 expandtab
@@ -185,10 +183,9 @@ endif
 
 " _. Clojure {{{
 if count(g:vimified_packages, 'clojure')
-    Bundle 'zaiste/VimClojure'
-
-    let vimclojure#HighlightBuiltins=1
-    let vimclojure#ParenRainbow=0
+    Bundle 'guns/vim-clojure-static'
+    Bundle 'tpope/vim-foreplay'
+    Bundle 'tpope/vim-classpath'
 endif
 " }}}
 
@@ -252,21 +249,6 @@ vnoremap <leader>yo "*y
 " Paste content from OS's clipboard
 nnoremap <leader>po "*p
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" MULTIPURPOSE TAB KEY
-" Indent if we're at the beginning of a line. Else, do completion.
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
-endfunction
-inoremap <tab> <c-r>=InsertTabWrapper()<cr>
-inoremap <s-tab> <c-n>
-
 " clear highlight after search
 noremap <silent><Leader>/ :nohls<CR>
 
@@ -278,8 +260,6 @@ nmap <silent> <leader>ll :set invlist<CR>
 nmap <silent> <leader>nn :set invnumber<CR>
 nmap <silent> <leader>pp :set invpaste<CR>
 nmap <silent> <leader>ii :set invrelativenumber<CR>
-
-nmap ; :
 
 " Seriously, guys. It's not like :W is bound to anything anyway.
 command! W :w
@@ -296,10 +276,6 @@ nnoremap <leader>L ^vg_y:execute @@<cr>
 " Fast saving and closing current buffer without closing windows displaying the
 " buffer
 nmap <leader>wq :w!<cr>:Bclose<cr>
-
-" w!! to write a file as sudo
-" stolen from Steve Losh
-cmap w!! w !sudo tee % >/dev/null
 
 " }}}
 
@@ -336,16 +312,19 @@ set ttimeout
 set ttimeoutlen=10
 
 " _ backups {{{
-" set undodir=~/.vim/tmp/undo//     " undo files
-set backupdir=~/.vim/tmp/backup// " backups
-set directory=~/.vim/tmp/swap//   " swap files
-set backup
-set noswapfile
+"set undodir=~/.vim/tmp/undo//     " undo files
+"set undofile
+"set undolevels=3000
+"set undoreload=10000
+"set backupdir=~/.vim/tmp/backup// " backups
+"set directory=~/.vim/tmp/swap//   " swap files
+"set backup
+"set noswapfile
 " _ }}}
 
 set modelines=0
 set noeol
-" set relativenumber
+"set relativenumber
 set numberwidth=10
 set ruler
 if executable('/bin/zsh')
@@ -369,12 +348,12 @@ set shiftwidth=2
 set expandtab
 set wrap
 set formatoptions=qrn1
-" set colorcolumn=+1
+"set colorcolumn=+1
 " }}}
 
 set visualbell
 
-set wildignore=.svn,CVS,.git,.hg,*.o,*.a,*.class,*.mo,*.la,*.so,*.obj,*.swp,*.jpg,*.png,*.xpm,*.gif,.DS_Store,*.aux,*.out,*.toc
+set wildignore=.svn,CVS,.git,.hg,*.o,*.a,*.class,*.mo,*.la,*.so,*.obj,*.swp,*.jpg,*.png,*.xpm,*.gif,.DS_Store,*.aux,*.out,*.toc,tmp,*.scssc
 set wildmenu
 
 set dictionary=/usr/share/dict/words
@@ -482,7 +461,7 @@ noremap <leader>bn :bnext<cr>
 
 " Splits ,v and ,h to open new splits (vertical and horizontal)
 nnoremap <leader>v <C-w>v<C-w>l
-nnoremap <leader>s <C-w>s<C-w>j
+nnoremap <leader>h <C-w>s<C-w>j
 
 " Reselect visual block after indent/outdent
 vnoremap < <gv
@@ -511,23 +490,6 @@ nnoremap zO zCzO
 
 " Use ,z to "focus" the current fold.
 nnoremap <leader>z zMzvzz
-
-function! MyFoldText() " {{{
-    let line = getline(v:foldstart)
-
-    let nucolwidth = &fdc + &number * &numberwidth
-    let windowwidth = winwidth(0) - nucolwidth - 3
-    let foldedlinecount = v:foldend - v:foldstart
-
-    " expand tabs into spaces
-    let onetab = strpart('          ', 0, &tabstop)
-    let line = substitute(line, '\t', onetab, 'g')
-
-    let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
-    let fillcharcount = windowwidth - len(line) - len(foldedlinecount)
-    return line . '…' . repeat(" ",fillcharcount) . foldedlinecount . '…' . ' '
-endfunction " }}}
-set foldtext=MyFoldText()
 
 " }}}
 
@@ -567,21 +529,19 @@ augroup END
 " EXTENSIONS {{{
 
 " _. Scratch {{{
+source ~/.vim/functions/scratch_toggle.vim
+" }}}
 
-command! ScratchToggle call ScratchToggle()
+" _. Buffer Handling {{{
+source ~/.vim/functions/buffer_handling.vim
+" }}}
 
-function! ScratchToggle()
-    if exists("w:is_scratch_window")
-        unlet w:is_scratch_window
-        exec "q"
-    else
-        exec "normal! :Sscratch\<cr>\<C-W>J:resize 13\<cr>"
-        let w:is_scratch_window = 1
-    endif
-endfunction
+" _. Tab {{{
+source ~/.vim/functions/insert_tab_wrapper.vim
+" }}}
 
-nnoremap <silent> <leader><tab> :ScratchToggle<cr>
-
+" _. Text Folding {{{
+source ~/.vim/functions/my_fold_text.vim
 " }}}
 
 " _. Gist {{{
@@ -602,87 +562,8 @@ vnoremap ar a[
 
 " }}}
 
-" Buffer Handling {{{
-" Visit http://vim.wikia.com/wiki/Deleting_a_buffer_without_closing_the_window
-" to learn more about :Bclose
-
-" Delete buffer while keeping window layout (don't close buffer's windows).
-" Version 2008-11-18 from http://vim.wikia.com/wiki/VimTip165
-if v:version < 700 || exists('loaded_bclose') || &cp
-  finish
-endif
-let loaded_bclose = 1
-if !exists('bclose_multiple')
-  let bclose_multiple = 1
-endif
-
-" Display an error message.
-function! s:Warn(msg)
-  echohl ErrorMsg
-  echomsg a:msg
-  echohl NONE
-endfunction
-
-" Command ':Bclose' executes ':bd' to delete buffer in current window.
-" The window will show the alternate buffer (Ctrl-^) if it exists,
-" or the previous buffer (:bp), or a blank buffer if no previous.
-" Command ':Bclose!' is the same, but executes ':bd!' (discard changes).
-" An optional argument can specify which buffer to close (name or number).
-function! s:Bclose(bang, buffer)
-  if empty(a:buffer)
-    let btarget = bufnr('%')
-  elseif a:buffer =~ '^\d\+$'
-    let btarget = bufnr(str2nr(a:buffer))
-  else
-    let btarget = bufnr(a:buffer)
-  endif
-  if btarget < 0
-    call s:Warn('No matching buffer for '.a:buffer)
-    return
-  endif
-  if empty(a:bang) && getbufvar(btarget, '&modified')
-    call s:Warn('No write since last change for buffer '.btarget.' (use :Bclose!)')
-    return
-  endif
-  " Numbers of windows that view target buffer which we will delete.
-  let wnums = filter(range(1, winnr('$')), 'winbufnr(v:val) == btarget')
-  if !g:bclose_multiple && len(wnums) > 1
-    call s:Warn('Buffer is in multiple windows (use ":let bclose_multiple=1")')
-    return
-  endif
-  let wcurrent = winnr()
-  for w in wnums
-    execute w.'wincmd w'
-    let prevbuf = bufnr('#')
-    if prevbuf > 0 && buflisted(prevbuf) && prevbuf != w
-      buffer #
-    else
-      bprevious
-    endif
-    if btarget == bufnr('%')
-      " Numbers of listed buffers which are not the target to be deleted.
-      let blisted = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != btarget')
-      " Listed, not target, and not displayed.
-      let bhidden = filter(copy(blisted), 'bufwinnr(v:val) < 0')
-      " Take the first buffer, if any (could be more intelligent).
-      let bjump = (bhidden + blisted + [-1])[0]
-      if bjump > 0
-        execute 'buffer '.bjump
-      else
-        execute 'enew'.a:bang
-      endif
-    endif
-  endfor
-  execute 'bdelete'.a:bang.' '.btarget
-  execute wcurrent.'wincmd w'
-endfunction
-command! -bang -complete=buffer -nargs=? Bclose call s:Bclose('<bang>', '<args>')
-nnoremap <silent> <Leader>bd :Bclose<CR>
-
-" }}}
-
 " Load addidional configuration (ie to overwrite shorcuts) {{{
-if filereadable(expand("~/dotfiles.git/.vim/after.vimrc"))
+if filereadable(expand("~/.vim/after.vimrc"))
   source ~/.vim/after.vimrc
 endif
 " }}}
